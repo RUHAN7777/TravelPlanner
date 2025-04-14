@@ -1,0 +1,61 @@
+/* styles/RegisterUser.css */
+
+.register-container {
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 30px;
+    background-color: #1e1e2f;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+    color: #fff;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .register-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #00ffff;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ccc;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 10px;
+    background-color: #2e2e3e;
+    color: #fff;
+    border: 1px solid #444;
+    border-radius: 6px;
+    transition: 0.3s;
+  }
+  
+  .form-group input:focus {
+    border-color: #00ffff;
+    outline: none;
+    background-color: #353545;
+  }
+  
+  button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #00ffff;
+    color: #1e1e2f;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #00cccc;
+  }
+  
