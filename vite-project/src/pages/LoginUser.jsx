@@ -21,11 +21,13 @@ const LoginUser = () => {
       const data = await res.json();
       if (res.ok) {
         alert(`Welcome back, ${data.user.name}!`);
-        // Save userId and user details
         localStorage.setItem('token', data.token);  // Save token in localStorage
         localStorage.setItem('user', JSON.stringify(data.user)); // Optionally save full user data
-        // Redirect to Add Trip or Dashboard
-        window.location.href = '/add-trip'; // You can use React Router for navigation if you like
+
+        // Redirect to the appropriate page after login
+        const redirectPage = localStorage.getItem('redirectPage') || 'add-trip'; // Default to 'add-trip' if not set
+        localStorage.removeItem('redirectPage');  // Clear the redirectPage after use
+        window.location.href = `/${redirectPage}`;  // Redirect to the intended page
       } else {
         alert(data.message || 'Login failed!');
       }
@@ -33,7 +35,6 @@ const LoginUser = () => {
       alert('Error connecting to server.');
     }
   };
-  
 
   return (
     <div className="register-container">

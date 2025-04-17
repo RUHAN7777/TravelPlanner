@@ -28,15 +28,15 @@ const AddTrip = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const token = localStorage.getItem('token');
-
+  
     if (!token) {
       alert('You need to login first!');
       window.location.href = '/login';
       return;
     }
-
+  
     const tripData = {
       tripName,
       startDate,
@@ -51,14 +51,14 @@ const AddTrip = () => {
         },
       ],
     };
-
+  
     try {
       const response = await axios.post('http://localhost:5000/trips', tripData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
+  
       alert('Trip added successfully!');
       setTripName('');
       setStartDate('');
@@ -68,9 +68,19 @@ const AddTrip = () => {
       setActivities([{ name: '', type: '', status: '' }]);
     } catch (error) {
       console.error('Error adding trip:', error);
-      alert('Failed to add trip');
+      
+      if (error.response) {
+        // If the error contains a response (i.e., error from the server)
+        console.error('Error response:', error.response.data);
+        alert(`Failed to add trip: ${error.response.data.message || JSON.stringify(error.response.data)}`);
+      } else {
+        // If there is no response (i.e., network error or client-side issue)
+        alert(`Failed to add trip: ${error.message}`);
+      }
     }
   };
+  
+  
 
   return (
     <div className="add-trip-container">

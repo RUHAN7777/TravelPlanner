@@ -93,7 +93,7 @@ app.post('/users/login', async (req, res) => {
 // ✅ Create new trip (Protected route)
 app.post('/trips', authMiddleware, async (req, res) => {
   try {
-    const userId = req.user._id; // Get userId from the token
+    const userId = req.user.id; // Get userId from the token
     const newTrip = new Trip({
       ...req.body,
       userId: userId // Set the userId to the logged-in user's ID
@@ -130,23 +130,53 @@ app.post('/trips/:tripId/upload-file', authenticateJWT, upload.single('file'), a
   }
 });
 
-// ✅ Get all trips (optional)
-app.get('/trips', authenticateJWT, async (req, res) => {
+
+
+app.get('/trips/:tripId/files/:filename', authenticateJWT, async (req, res) => {
   try {
-    const trips = await Trip.find({});
-    res.json(trips);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch trips" });
+    const { tripId, filename } = req.params;
+    const trip = await Trip.findById(tripId);
+    if (!trip) return res.status(404).json({ error: 'Trip not found' });
+
+    const file = trip.files.find(f => f.originalName === filename);
+    if (!file) return res.status(404).json({ error: 'File not found' });
+
+    res.set({
+      'Content-Type': file.mimeType,
+      'Content-Disposition': `inline; filename="${file.originalName}"`
+    });
+
+    res.send(file.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Could not fetch file' });
+  }
+});
+
+// ✅ Get unique trips (optional)
+
+app.get('/trips', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    console.log("Fetching trips for user:", userId); // debug log
+
+    const trips = await Trip.find({ userId: new mongoose.Types.ObjectId(userId) });
+    res.status(200).json(trips);
+  } catch (error) {
+    console.error('❌ Error fetching user trips:', error);
+    res.status(500).json({ error: "Failed to fetch user trips" });
   }
 });
 
 // ✅ Get trips by destination city
 app.get('/trips/destination/:city', authenticateJWT, async (req, res) => {
   try {
-    const trips = await Trip.find({ "destinations.city": req.params.city })
-                            .populate('userId', 'name'); // populate name
+    const userId = req.user._id;
+    const trips = await Trip.find({
+      "destinations.city": req.params.city,
+      userId: userId
+    }).populate('userId', 'name');
 
-    // Inject userName into response
     const enrichedTrips = trips.map(trip => {
       const tripObj = trip.toObject();
       tripObj.userName = trip.userId?.name || 'Unknown';
@@ -159,13 +189,16 @@ app.get('/trips/destination/:city', authenticateJWT, async (req, res) => {
   }
 });
 
+
 // ✅ Get trips by date range
 app.get('/trips/dates/:start/:end', authenticateJWT, async (req, res) => {
   try {
+    const userId = req.user._id;
     const { start, end } = req.params;
     const trips = await Trip.find({
       startDate: { $gte: new Date(start) },
-      endDate: { $lte: new Date(end) }
+      endDate: { $lte: new Date(end) },
+      userId: userId
     }).populate('userId', 'name');
 
     const enrichedTrips = trips.map(trip => {
@@ -210,7 +243,9 @@ app.put('/trips/:tripId/update-activity', authenticateJWT, async (req, res) => {
 // ✅ Analytics: Most visited cities
 app.get('/analytics/most-visited-cities', authenticateJWT, async (req, res) => {
   try {
+    const userId = req.user._id;
     const result = await Trip.aggregate([
+      { $match: { userId: new mongoose.Types.ObjectId(userId) } },
       { $unwind: "$destinations" },
       {
         $group: {
@@ -230,7 +265,9 @@ app.get('/analytics/most-visited-cities', authenticateJWT, async (req, res) => {
 // ✅ Analytics: Most popular activities
 app.get('/analytics/most-popular-activities', authenticateJWT, async (req, res) => {
   try {
+    const userId = req.user._id;
     const result = await Trip.aggregate([
+      { $match: { userId: new mongoose.Types.ObjectId(userId) } },
       { $unwind: "$destinations" },
       { $unwind: "$destinations.activities" },
       {
@@ -247,6 +284,7 @@ app.get('/analytics/most-popular-activities', authenticateJWT, async (req, res) 
     res.status(500).json({ error: "Failed to aggregate activities" });
   }
 });
+
 
 // ✅ Start server
 app.listen(5000, () => {
