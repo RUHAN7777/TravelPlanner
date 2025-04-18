@@ -132,127 +132,168 @@ const Dashboard = () => {
   
 
   return (
-    <div className="dashboard">
-      {user?.name && <h2>Welcome, {user.name} 👋</h2>}
-      <h1>Your Travel Dashboard</h1>
-
-      {/* Filters */}
-      <div className="filters">
-        <input
-          type="text"
-          placeholder="Search by Destination"
-          value={destinationQuery}
-          onChange={(e) => setDestinationQuery(e.target.value)}
-        />
-        <button onClick={fetchByDestination}>Search</button>
-
-        <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-        <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-        <button onClick={fetchByDateRange}>Filter by Date</button>
-      </div>
-
-      {/* Analytics */}
-      <div className="analytics">
-        <div>
-          <h3>Most Visited Cities</h3>
-          <ul>
-        {analytics.mostVisitedCities.map((cityObj, idx) => (
-          <li key={idx}>
-            {cityObj._id} - Visited {cityObj.visitCount} times
-          </li>
-        ))}
-      </ul>
-
+    <div className="dashboard bg-slate-50 dark:bg-slate-900 min-h-screen p-6">
+      <div className="max-w-6xl mx-auto">
+        {user?.name && (
+          <h2 className="text-2xl font-bold mb-2 text-slate-700 dark:text-slate-200">
+            Welcome, <span className="text-primary">{user.name}</span> 👋
+          </h2>
+        )}
+        <h1 className="text-3xl font-extrabold mb-8 gradient-text">Your Travel Dashboard</h1>
+  
+        {/* Filters */}
+        <div className="filters bg-white dark:bg-slate-800 rounded-xl shadow-lg p-4 mb-8 flex flex-wrap gap-3 items-center">
+          <div className="search-container flex-1 min-w-[300px]">
+            <input
+              type="text"
+              placeholder="Search by Destination"
+              value={destinationQuery}
+              onChange={(e) => setDestinationQuery(e.target.value)}
+              className="input-field w-full"
+            />
+          </div>
+          <button onClick={fetchByDestination} className="btn-primary">
+            Search
+          </button>
+  
+          <div className="date-filters flex flex-wrap gap-3 items-center">
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="input-field"
+            />
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="input-field"
+            />
+            <button onClick={fetchByDateRange} className="btn-secondary">
+              Filter by Date
+            </button>
+          </div>
         </div>
-        <div>
-          <h3>Most Popular Activities</h3>
-          <ul>
-          {analytics.mostPopularActivities.map((actObj, idx) => (
-            <li key={idx}>
-              {typeof actObj === 'string' ? actObj : `${actObj._id} - Chosen ${actObj.count} times`}
-            </li>
+  
+        {/* Analytics */}
+        <div className="analytics grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="analytics-card">
+            <h3 className="card-title">Most Visited Cities</h3>
+            <ul className="analytics-list">
+              {analytics.mostVisitedCities.map((cityObj, idx) => (
+                <li key={idx} className="analytics-item">
+                  <span className="city-name">{cityObj._id}</span>
+                  <span className="visit-count">Visited {cityObj.visitCount} times</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="analytics-card">
+            <h3 className="card-title">Most Popular Activities</h3>
+            <ul className="analytics-list">
+              {analytics.mostPopularActivities.map((actObj, idx) => (
+                <li key={idx} className="analytics-item">
+                  <span className="activity-name">
+                    {typeof actObj === 'string' ? actObj : actObj._id}
+                  </span>
+                  {typeof actObj !== 'string' && (
+                    <span className="activity-count">Chosen {actObj.count} times</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+  
+        {/* Trip Cards */}
+        <div className="trips-container grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {trips.map((trip) => (
+            <div key={trip._id} className="trip-card">
+              <h3 className="trip-title">{trip.tripName}</h3>
+  
+              {/* Destinations */}
+              <div className="trip-section">
+                <p className="section-label">Destinations</p>
+                <div className="destinations-list">
+                  {trip.destinations?.map((dest, index) => (
+                    <span key={index} className="destination-tag">
+                      {dest.city}, {dest.country}
+                    </span>
+                  ))}
+                </div>
+              </div>
+  
+              {/* Activities */}
+              <div className="trip-section">
+                <p className="section-label">Activities</p>
+                <ul className="activities-list">
+                  {trip.destinations?.map((dest, destIndex) =>
+                    dest.activities?.map((act, actIndex) => (
+                      <li key={`${destIndex}-${actIndex}`} className="activity-item">
+                        <div className="activity-info">
+                          <span className="activity-name">{act.name}</span>
+                          <span className={`activity-status status-${act.status?.toLowerCase() || 'pending'}`}>
+                            {act.status || 'Pending'}
+                          </span>
+                        </div>
+                        <select
+                          value={act.status || 'Pending'}
+                          onChange={(e) =>
+                            updateActivityStatus(
+                              trip._id,
+                              dest.city,
+                              act.name,
+                              e.target.value
+                            )
+                          }
+                          className="status-select"
+                        >
+                          <option value="Pending">Pending</option>
+                          <option value="Ongoing">Ongoing</option>
+                          <option value="Completed">Completed</option>
+                        </select>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </div>
+  
+              {/* Files */}
+              {trip.files?.length > 0 && (
+                <div className="trip-section">
+                  <p className="section-label">Files</p>
+                  <div className="files-list">
+                    {trip.files.map((file, index) => (
+                      <a
+                        key={index}
+                        href={`http://localhost:5000/trips/${trip._id}/files/${file.originalName}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="file-link"
+                      >
+                        {file.originalName}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+  
+              {/* Upload Files */}
+              <div className="trip-section">
+                <p className="section-label">Upload File</p>
+                <div className="file-upload">
+                  <input
+                    type="file"
+                    onChange={(e) => handleFileUpload(e, trip._id)}
+                    accept="image/*,video/*,.pdf"
+                    className="file-input"
+                  />
+                </div>
+              </div>
+            </div>
           ))}
-        </ul>
-
         </div>
       </div>
-
-      {/* Trip Cards */}
-      {/* Trip Cards */}
-      {/* Trip Cards */}
-      {/* Trip Cards */}
-{trips.map((trip) => (
-  <div key={trip._id} className="trip-card">
-    <h3>{trip.tripName}</h3>
-
-    {/* Destinations */}
-    <p><strong>Destinations:</strong> 
-      {trip.destinations?.map((dest, index) => (
-        <span key={index}>
-          {dest.city}, {dest.country}
-          {index < trip.destinations.length - 1 ? ', ' : ''}
-        </span>
-      ))}
-    </p>
-
-    {/* Activities */}
-    <p><strong>Activities:</strong></p>
-    <ul>
-      {trip.destinations?.map((dest, destIndex) =>
-        dest.activities?.map((act, actIndex) => (
-          <li key={`${destIndex}-${actIndex}`}>
-            {act.name} - Status: {act.status || 'Pending'}
-            <select
-              value={act.status || 'Pending'}
-              onChange={(e) =>
-                updateActivityStatus(
-                  trip._id,
-                  dest.city,
-                  act.name,
-                  e.target.value
-                )
-              }
-            >
-              <option value="Pending">Pending</option>
-              <option value="Ongoing">Ongoing</option>
-              <option value="Completed">Completed</option>
-            </select>
-          </li>
-        ))
-      )}
-    </ul>
-
-    {/* Files */}
-    {trip.files?.length > 0 && (
-      <div className="file-upload">
-        <h4>Files:</h4>
-        {trip.files.map((file, index) => (
-          <a
-            key={index}
-            href={`http://localhost:5000/trips/${trip._id}/files/${file.originalName}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {file.originalName}
-          </a>
-        ))}
-      </div>
-    )}
-
-    {/* Upload Files */}
-    <div className="file-upload">
-      <h4>Upload File:</h4>
-      <input
-        type="file"
-        onChange={(e) => handleFileUpload(e, trip._id)}
-        accept="image/*,video/*,.pdf"
-      />
-    </div>
-  </div>
-))}
-
-
-
     </div>
   );
 };
