@@ -83,107 +83,166 @@ const AddTrip = () => {
   
 
   return (
-    <div className="add-trip-container">
-      <h1>Add a New Trip</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Trip Name</label>
-          <input
-            type="text"
-            value={tripName}
-            onChange={(e) => setTripName(e.target.value)}
-            placeholder="Enter trip name"
-            required
-          />
+    <div className="add-trip-page">
+      <div className="add-trip-container">
+        <div className="page-header">
+          <h1 className="page-title">Create New Trip</h1>
+          <p className="page-subtitle">Plan your next adventure with our AI-powered trip planner</p>
         </div>
+        
+        <div className="form-card">
+          <form onSubmit={handleSubmit}>
+            <div className="form-section">
+              <h2 className="section-title">Trip Details</h2>
+              
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Trip Name</label>
+                  <input
+                    type="text"
+                    value={tripName}
+                    onChange={(e) => setTripName(e.target.value)}
+                    placeholder="Enter a memorable name for your trip"
+                    required
+                    className="input-field"
+                  />
+                </div>
+              </div>
+              
+              <div className="form-row two-columns">
+                <div className="form-group">
+                  <label>Start Date</label>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    required
+                    className="input-field"
+                  />
+                </div>
 
-        <div className="form-group">
-          <label>Start Date</label>
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            required
-          />
-        </div>
+                <div className="form-group">
+                  <label>End Date</label>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    required
+                    className="input-field"
+                  />
+                </div>
+              </div>
+              
+              <div className="form-row two-columns">
+                <div className="form-group">
+                  <label>City</label>
+                  <input
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="Where are you going?"
+                    required
+                    className="input-field"
+                  />
+                </div>
 
-        <div className="form-group">
-          <label>End Date</label>
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            required
-          />
-        </div>
+                <div className="form-group">
+                  <label>Country</label>
+                  <input
+                    type="text"
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    placeholder="Which country?"
+                    required
+                    className="input-field"
+                  />
+                </div>
+              </div>
+            </div>
 
-        <div className="form-group">
-          <label>City</label>
-          <input
-            type="text"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            placeholder="Enter city"
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Country</label>
-          <input
-            type="text"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            placeholder="Enter country"
-            required
-          />
-        </div>
-
-        <div className="activities">
-          <h3>Activities</h3>
-          {activities.map((activity, index) => (
-            <div key={index} className="activity-form">
-              <input
-                type="text"
-                name="name"
-                value={activity.name}
-                onChange={(e) => handleActivityChange(index, e)}
-                placeholder="Activity Name"
-                required
-              />
-              <input
-                type="text"
-                name="type"
-                value={activity.type}
-                onChange={(e) => handleActivityChange(index, e)}
-                placeholder="Activity Type"
-                required
-              />
-              <select
-                name="status"
-                value={activity.status}
-                onChange={(e) => handleActivityChange(index, e)}
-                required
+            <div className="form-section">
+              <div className="section-header">
+                <h2 className="section-title">Activities</h2>
+                <p className="section-subtitle">What would you like to do on your trip?</p>
+              </div>
+              
+              <div className="activities-list">
+                {activities.map((activity, index) => (
+                  <div key={index} className="activity-card">
+                    <div className="activity-form">
+                      <div className="form-row three-columns">
+                        <div className="form-group">
+                          <label>Activity Name</label>
+                          <input
+                            type="text"
+                            name="name"
+                            value={activity.name}
+                            onChange={(e) => handleActivityChange(index, e)}
+                            placeholder="e.g., Visit Eiffel Tower"
+                            required
+                            className="input-field"
+                          />
+                        </div>
+                        
+                        <div className="form-group">
+                          <label>Activity Type</label>
+                          <input
+                            type="text"
+                            name="type"
+                            value={activity.type}
+                            onChange={(e) => handleActivityChange(index, e)}
+                            placeholder="e.g., Sightseeing"
+                            required
+                            className="input-field"
+                          />
+                        </div>
+                        
+                        <div className="form-group">
+                          <label>Status</label>
+                          <select
+                            name="status"
+                            value={activity.status}
+                            onChange={(e) => handleActivityChange(index, e)}
+                            required
+                            className="select-field"
+                          >
+                            <option value="">Select Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Completed">Completed</option>
+                            <option value="In Progress">In Progress</option>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <button 
+                        type="button" 
+                        onClick={() => removeActivity(index)}
+                        className="remove-activity-btn"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <button 
+                type="button" 
+                onClick={addActivity} 
+                className="add-activity-btn"
               >
-                <option value="">Select Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Completed">Completed</option>
-                <option value="In Progress">In Progress</option>
-              </select>
-              <button type="button" onClick={() => removeActivity(index)}>
-                Remove Activity
+                <span className="btn-icon">+</span> Add Activity
               </button>
             </div>
-          ))}
-          <button type="button" onClick={addActivity} className="add-activity-btn">
-            + Add Activity
-          </button>
-        </div>
 
-        <button type="submit" className="submit-btn">
-          Add Trip
-        </button>
-      </form>
+            <div className="form-actions">
+              <button type="submit" className="submit-btn">
+                Create Trip
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

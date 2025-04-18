@@ -1,95 +1,283 @@
-/* Page background and center alignment */
-body {
-    background-color: #e6f2ff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
+/* AddTrip.css - Modern Styling for AI Trip Planner */
+
+:root {
+  --primary-color: #4f46e5; /* Rich indigo */
+  --primary-light: #818cf8; /* Lighter indigo */
+  --primary-dark: #3730a3; /* Darker indigo */
+  --accent-color: #0ea5e9; /* Vibrant sky blue */
+  --accent-secondary: #10b981; /* Emerald green */
+  --text-color: #1e293b; /* Slate dark */
+  --text-light: #64748b; /* Slate medium */
+  --bg-light: #f8fafc; /* Slate lightest */
+  --bg-dark: #0f172a; /* Slate darkest */
+  --card-bg: white;
+  --input-bg: #f8fafc;
+  --input-border: #e2e8f0;
+  --input-focus-border: #818cf8;
+  --error-color: #ef4444;
+  --success-color: #10b981;
+  --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  --transition-smooth: all 0.3s ease;
+  --gradient-primary: linear-gradient(135deg, #4f46e5, #0ea5e9);
+  --gradient-accent: linear-gradient(135deg, #0ea5e9, #10b981);
+  --gradient-danger: linear-gradient(135deg, #ef4444, #f97316);
+}
+
+.add-trip-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  padding: 2rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* This centers it vertically */
+  width: 100vw
+}
+
+
+.add-trip-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--primary-dark);
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.page-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.form-section {
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--input-border);
+}
+
+.form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--primary-dark);
+}
+
+.section-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  margin-top: -1rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-header {
+  margin-bottom: 1.5rem;
+}
+
+.form-row {
+  margin-bottom: 1.5rem;
+}
+
+.form-row.two-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-row.three-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: 0.95rem;
+}
+
+.input-field, .select-field {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: var(--transition-smooth);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+}
+
+.input-field:focus, .select-field:focus {
+  outline: none;
+  border-color: var(--input-focus-border);
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+}
+
+.input-field::placeholder {
+  color: #94a3b8;
+}
+
+.activity-card {
+  background: var(--bg-light);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  position: relative;
+  transition: var(--transition-smooth);
+  border: 1px solid var(--input-border);
+}
+
+.activity-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.activity-form {
+  position: relative;
+}
+
+.remove-activity-btn {
+  position: absolute;
+  top: -1rem;
+  right: -1rem;
+  background-color: white;
+  border: 1px solid #fed7d7;
+  color: #dc2626;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: var(--transition-smooth);
+}
+
+.remove-activity-btn:hover {
+  background-color: #fee2e2;
+  transform: scale(1.05);
+}
+
+.add-activity-btn {
+  background-color: white;
+  color: var(--primary-color);
+  border: 2px dashed var(--primary-light);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  width: 100%;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: var(--transition-smooth);
+}
+
+.add-activity-btn:hover {
+  background-color: rgba(129, 140, 248, 0.1);
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.submit-btn {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .form-row.two-columns,
+  .form-row.three-columns {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
   
-  /* Container */
-  .add-trip-container {
-    width: 100%;
-    max-width: 650px;
-    background-color: #d0e7ff;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  .page-title {
+    font-size: 2rem;
   }
   
-  /* Heading */
-  .add-trip-container h1 {
-    text-align: center;
-    font-size: 2.2rem;
-    color: #004d80;
-    margin-bottom: 1.8rem;
+  .form-card {
+    padding: 1.5rem;
   }
   
-  /* Form elements */
-  .form-group {
-    margin-bottom: 1.2rem;
+  .activity-card {
+    padding: 1.25rem;
   }
   
-  label {
-    font-weight: 600;
-    color: #003355;
-    display: block;
-    margin-bottom: 0.3rem;
+  .section-title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-trip-page {
+    padding: 1rem 0.5rem;
   }
   
-  input,
-  select {
-    width: 100%;
-    padding: 0.8rem;
-    border-radius: 6px;
-    border: 1px solid #aac4e6;
-    background-color: #f0f8ff;
-    color: #002b4d;
-    font-size: 1rem;
+  .page-title {
+    font-size: 1.75rem;
   }
   
-  /* Buttons */
-  button {
-    width: 100%;
-    padding: 1rem;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 1rem;
-    transition: all 0.3s ease;
+  .remove-activity-btn {
+    top: 0;
+    right: 0;
   }
-  
-  /* Add Activity Button */
-  .add-activity-btn {
-    background-color: #6c63ff;
-    color: white;
-  }
-  
-  .add-activity-btn:hover {
-    background-color: #574fd3;
-  }
-  
-  /* Submit Button */
-  .submit-btn {
-    background-color: #00b894;
-    color: white;
-  }
-  
-  .submit-btn:hover {
-    background-color: #009f7a;
-  }
-  
-  /* Activities Section */
-  .activities {
-    margin-top: 2rem;
-  }
-  
-  .activity-form {
-    margin-bottom: 1rem;
-  }
-  
+}

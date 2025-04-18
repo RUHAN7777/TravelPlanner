@@ -93,7 +93,8 @@ app.post('/users/login', async (req, res) => {
 // ✅ Create new trip (Protected route)
 app.post('/trips', authMiddleware, async (req, res) => {
   try {
-    const userId = req.user.id; // Get userId from the token
+    console.log('🧑 User from token:', req.user);
+    const userId = req.user._id; // Get userId from the token
     const newTrip = new Trip({
       ...req.body,
       userId: userId // Set the userId to the logged-in user's ID
@@ -102,7 +103,7 @@ app.post('/trips', authMiddleware, async (req, res) => {
 
     res.status(201).json({ message: 'Trip created successfully 🧳', trip: newTrip });
   } catch (error) {
-    console.error('❌ Error creating trip:', error);
+    console.error('❌ Error creating trip:', error.stack);
     res.status(500).json({ error: 'Failed to create trip', details: error.message });
   }
 });
@@ -132,7 +133,7 @@ app.post('/trips/:tripId/upload-file', authenticateJWT, upload.single('file'), a
 
 
 
-app.get('/trips/:tripId/files/:filename', authenticateJWT, async (req, res) => {
+app.get('/trips/:tripId/files/:filename', async (req, res) => {
   try {
     const { tripId, filename } = req.params;
     const trip = await Trip.findById(tripId);

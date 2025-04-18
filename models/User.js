@@ -9,14 +9,15 @@ const userSchema = new mongoose.Schema({
 });
 
 // Method to generate JWT token
-userSchema.methods.generateAuthToken = function() {
+userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
-    { _id: this._id, email: this.email },
+    { id: this._id, email: this.email }, // 🔥 FIXED: using id instead of _id
     process.env.JWT_SECRET,
     { expiresIn: '7d' }
   );
   return token;
 };
+
 
 
 module.exports = mongoose.model('User', userSchema);
