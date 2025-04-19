@@ -40,26 +40,62 @@ const RegisterUser = () => {
   };
 
   return (
-    <div className="register-container">
-      <h2>Create an Account</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Name:</label>
-          <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+    <div className="register-wrapper">
+      <div className="register-container">
+        <div className="register-header">
+          <h2 className="register-title">Create an Account</h2>
+          <p className="register-subtitle">Join us today and start your travel planning journey</p>
         </div>
-
-        <div className="form-group">
-          <label>Email:</label>
-          <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+        
+        <form onSubmit={handleSubmit} className="register-form">
+          <div className="form-group">
+            <label className="form-label">Name</label>
+            <input 
+              type="text" 
+              name="name" 
+              value={formData.name} 
+              onChange={handleChange} 
+              required 
+              className="form-input"
+              placeholder="Enter your full name"
+            />
+          </div>
+  
+          <div className="form-group">
+            <label className="form-label">Email</label>
+            <input 
+              type="email" 
+              name="email" 
+              value={formData.email} 
+              onChange={handleChange} 
+              required 
+              className="form-input"
+              placeholder="Enter your email address"
+            />
+          </div>
+  
+          <div className="form-group">
+            <label className="form-label">Password</label>
+            <input 
+              type="password" 
+              name="password" 
+              value={formData.password} 
+              onChange={handleChange} 
+              required 
+              className="form-input"
+              placeholder="Create a strong password"
+            />
+          </div>
+  
+          <button type="submit" className="register-button">
+            Create Account
+          </button>
+        </form>
+        
+        <div className="register-footer">
+          <p>Already have an account? <span className="login-link">Login</span></p>
         </div>
-
-        <div className="form-group">
-          <label>Password:</label>
-          <input type="password" name="password" value={formData.password} onChange={handleChange} required />
-        </div>
-
-        <button type="submit">Register</button>
-      </form>
+      </div>
     </div>
   );
 };

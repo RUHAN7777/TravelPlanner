@@ -44,6 +44,7 @@ body {
 
 /* Hero Section */
 .hero-section {
+  background-color: #4f46e5;
   position: relative;
   height: 100vh;
   width: 100vw;
