@@ -312,7 +312,7 @@ body {
   padding: 0.375rem 0.5rem;
   border-radius: 0.375rem;
   border: 1px solid var(--slate-200);
-  background-color: white;
+  background-color: rgb(52, 15, 15);
   font-size: 0.875rem;
   cursor: pointer;
 }

@@ -109,7 +109,7 @@ app.post('/trips', authMiddleware, async (req, res) => {
 });
 
 // Upload a file to a trip (Protected route)
-app.post('/trips/:tripId/upload-file', authenticateJWT, upload.single('file'), async (req, res) => {
+app.post('/trips/:tripId/upload-file', authMiddleware, upload.single('file'), async (req, res) => {
   try {
     const file = {
       originalName: req.file.originalname,  // Change filename to originalName
@@ -170,7 +170,7 @@ app.get('/trips', authMiddleware, async (req, res) => {
 });
 
 // ✅ Get trips by destination city
-app.get('/trips/destination/:city', authenticateJWT, async (req, res) => {
+app.get('/trips/destination/:city', authMiddleware, async (req, res) => {
   try {
     const userId = req.user._id;
     const trips = await Trip.find({
@@ -192,7 +192,7 @@ app.get('/trips/destination/:city', authenticateJWT, async (req, res) => {
 
 
 // ✅ Get trips by date range
-app.get('/trips/dates/:start/:end', authenticateJWT, async (req, res) => {
+app.get('/trips/dates/:start/:end', authMiddleware, async (req, res) => {
   try {
     const userId = req.user._id;
     const { start, end } = req.params;
@@ -215,7 +215,7 @@ app.get('/trips/dates/:start/:end', authenticateJWT, async (req, res) => {
 });
 
 // ✅ Update activity status in a trip
-app.put('/trips/:tripId/update-activity', authenticateJWT, async (req, res) => {
+app.put('/trips/:tripId/update-activity', authMiddleware, async (req, res) => {
   try {
     const { city, activityName, newStatus } = req.body;
 
@@ -242,29 +242,41 @@ app.put('/trips/:tripId/update-activity', authenticateJWT, async (req, res) => {
 });
 
 // ✅ Analytics: Most visited cities
-app.get('/analytics/most-visited-cities', authenticateJWT, async (req, res) => {
+app.get('/analytics/most-visited-cities', authMiddleware, async (req, res) => {
   try {
     const userId = req.user._id;
+
     const result = await Trip.aggregate([
       { $match: { userId: new mongoose.Types.ObjectId(userId) } },
       { $unwind: "$destinations" },
       {
         $group: {
-          _id: "$destinations.city",
-          visitCount: { $sum: 1 }
+          _id: "$destinations.city",  // Group by city name
+          visitCount: { $sum: 1 }     // Count each appearance
         }
       },
       { $sort: { visitCount: -1 } }
     ]);
 
-    res.json({ mostVisitedCities: result });
+    // If city name (_id) is null or missing, we guard against it:
+    const formattedResult = result.map(item => ({
+      city: item._id || "Unknown",
+      visits: item.visitCount || 0
+    }));
+
+    res.json({ mostVisitedCities: formattedResult });
+
   } catch (err) {
+    console.error("Error in analytics route:", err);
     res.status(500).json({ error: "Failed to aggregate cities" });
   }
 });
 
+
+
+
 // ✅ Analytics: Most popular activities
-app.get('/analytics/most-popular-activities', authenticateJWT, async (req, res) => {
+app.get('/analytics/most-popular-activities', authMiddleware, async (req, res) => {
   try {
     const userId = req.user._id;
     const result = await Trip.aggregate([
@@ -280,11 +292,13 @@ app.get('/analytics/most-popular-activities', authenticateJWT, async (req, res) 
       { $sort: { count: -1 } }
     ]);
 
-    res.json({ mostPopularActivities: result });
+    res.json({ mostPopularActivities: result.map(item => ({ activity: item._id, count: item.count })) });
+
   } catch (err) {
     res.status(500).json({ error: "Failed to aggregate activities" });
   }
 });
+
 
 
 // ✅ Start server

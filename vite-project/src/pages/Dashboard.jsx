@@ -47,22 +47,20 @@ const Dashboard = () => {
         })
       ]);
   
-      console.log(citiesRes.data, activitiesRes.data);
+      console.log('Cities:', citiesRes.data);
+      console.log('Activities:', activitiesRes.data);
   
-      // 👇 Actually set the data here
       setAnalytics({
-        mostVisitedCities: Array.isArray(citiesRes.data.mostVisitedCities)
-          ? citiesRes.data.mostVisitedCities
-          : [],
-        mostPopularActivities: Array.isArray(activitiesRes.data.mostPopularActivities)
-          ? activitiesRes.data.mostPopularActivities
-          : [],
-      });      
+        mostVisitedCities: citiesRes.data.mostVisitedCities || [],
+        mostPopularActivities: activitiesRes.data.mostPopularActivities || [],
+      });
+      
   
     } catch (error) {
       console.error("Error fetching analytics:", error);
     }
   };
+  
   
 
   const fetchByDestination = async () => {
@@ -177,28 +175,32 @@ const Dashboard = () => {
   
         {/* Analytics */}
         <div className="analytics grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="analytics-card">
-            <h3 className="card-title">Most Visited Cities</h3>
-            <ul className="analytics-list">
-              {analytics.mostVisitedCities.map((cityObj, idx) => (
-                <li key={idx} className="analytics-item">
-                  <span className="city-name">{cityObj._id}</span>
-                  <span className="visit-count">Visited {cityObj.visitCount} times</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div className="analytics-card">
+        <h3 className="card-title">Most Visited Cities</h3>
+        <ul className="analytics-list">
+          {analytics.mostVisitedCities.map((cityObj, idx) => (
+            <li key={idx} className="analytics-item">
+              <span className="city-name">{cityObj.city || 'Unknown'}</span>
+              <span className="visit-count">Visited {cityObj.visits || 0} times</span>  {/* Use visits */}
+            </li>
+          ))}
+        </ul>
+      </div>
+
           <div className="analytics-card">
             <h3 className="card-title">Most Popular Activities</h3>
             <ul className="analytics-list">
               {analytics.mostPopularActivities.map((actObj, idx) => (
                 <li key={idx} className="analytics-item">
                   <span className="activity-name">
-                    {typeof actObj === 'string' ? actObj : actObj._id}
+                  {typeof actObj === 'string' ? actObj : actObj.activity || 'Unknown'}
+
                   </span>
+
                   {typeof actObj !== 'string' && (
-                    <span className="activity-count">Chosen {actObj.count} times</span>
+                    <span className="activity-count">Chosen {actObj.count || 0} times</span>
                   )}
+
                 </li>
               ))}
             </ul>
